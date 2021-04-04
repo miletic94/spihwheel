@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding:0;
+        }
+        canvas {
+            
+            animation:  infinite 5.5s;
+        }
+        @keyframes rot {
+            100% {
+                transform: rotate(38482deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id=canvas>
+        
+    </canvas>
+    <script>
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx = canvas.getContext("2d");
+
+        class Wheel {
+            arrayOfSecs = [];
+            numberOfSecs = this.arrayOfSecs.length;
+            rotationPerSec = 360/this.numberOfSecs // USED WHEN RENDERING
+            anglePerSec = this.rotationPerSec * (Math.PI / 180);
+        
+            // Every wheel shoud have innerCircle and outterCircle based on disposable space
+            innerCircleRadius =  innerWidth < innerHeight ? (innerWidth - 150)/2 : (innerHeight-150)/2 
+            outterCircleRadius = this.innerCircleRadius + 20;
+            circleCenter = [window.innerWidth/2, window.innerHeight/2];
+        }
+
+        /* In WheelSec there could be two objects of shape and text
+            OR those could be two different classes.
+        */
+        class WheelSec {
+            constructor(wheel, text = "Put your text here", shapeColor = "white",  shapeBorderColor = "black", fontSize = 20) {
+                this.text = text;
+                this.shapeColor = shapeColor;
+                this.strokeColor = shapeBorderColor;
+                this.fontSize = fontSize;
+                wheel.arrayOfSecs.push(this);
+                wheel.numberOfSecs = wheel.arrayOfSecs.length;
+                wheel.rotationPerSec = 360/wheel.numberOfSecs // USED WHEN RENDERING
+                wheel.anglePerSec = wheel.rotationPerSec * (Math.PI / 180);
+            }
+        }
+
+        function render(wheel ) {
+            secs = wheel.arrayOfSecs
+            ctx.beginPath();
+            ctx.arc(...wheel.circleCenter, wheel.outterCircleRadius, 0, Math.PI * 2)
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(...wheel.circleCenter, wheel.innerCircleRadius, 0, Math.PI * 2)
+            ctx.stroke();
+
+            secs.map((sec, index) => {
+                const STARTING_POINT = index * wheel.rotationPerSec * Math.PI / 180;
+                const ENDING_POINT =  (index+1) * wheel.anglePerSec
+                ctx.beginPath();
+                ctx.strokeStyle = sec.shapeBorderColor;
+                ctx.fillStyle = sec.shapeColor;
+                console.log(`Type: ${sec.shapeColor}`)
+                console.log(`Center ${wheel.circleCenter}`);
+                console.log(`Radius: ${wheel.innerCircleRadius}`);
+                console.log(`Starting point: ${STARTING_POINT}`)
+                console.log(`Ending point: ${ENDING_POINT}`)
+                console.log(`Text: ${sec.text}`)
+                ctx.arc(...wheel.circleCenter, wheel.innerCircleRadius, STARTING_POINT, ENDING_POINT)
+                ctx.lineTo(...wheel.circleCenter)
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.save();
+                ctx.translate(...wheel.circleCenter)
+                /*AT THE HALF OF SEC*/console.log(`ROTATION : ${STARTING_POINT + (ENDING_POINT- STARTING_POINT)/ 2}`)
+                ctx.rotate(STARTING_POINT + (ENDING_POINT- STARTING_POINT)/ 2)
+                
+                ctx.font = `bold ${JSON.stringify(sec.fontSize)}px Arial`;
+                ctx.fillStyle = "black";
+                ctx.textAlign = "center";
+                ctx.fillText(sec.text, wheel.innerCircleRadius/2, sec.fontSize/2)
+                ctx.restore();
+                
+            })
+        }
+        w = new Wheel();
+        wc1 = new WheelSec(w, text = "Hi", shapeBorderColor = "purple", shapeColor = "#aa9922");
+        wc2 = new WheelSec(w, text = "My name is", shapeBorderColor = "blue", shapeColor = "red");
+        wc3 = new WheelSec(w, text = "Nemanja Miletić", shapeBorderColor = "green", shapeColor = "yellow");
+        wc4 = new WheelSec(w, text = "I often ponder why ", shapeBorderColor = "yellow", shapeColor = "yellow");
+        wc5 = new WheelSec(w, text = "I sometimes wonder how ", shapeBorderColor = "lime", shapeColor = "yellow");
+
+        
+        console.log(w.numberOfSecs)
+        render(w); 
+    </script>
+</body>
+</html>
+
+
+<script>
+    /* 
+    class Parent
+        number_of_secs
+        array_of_secs
+        anlge_in_rads_per_sec
+        rotation_per_sec OR starting_position_for_drawing_angle
+    */
+</script>
